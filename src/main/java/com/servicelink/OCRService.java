@@ -15,16 +15,25 @@ public class OCRService {
 
         Tesseract tesseract = new Tesseract();
 
-        tesseract.setDatapath(
-                "C:\\Program Files\\Tesseract-OCR\\tessdata");
+        String tessDataPath = System.getenv(
+                "TESSDATA_PREFIX"
+        );
 
+        if (tessDataPath == null || tessDataPath.isBlank()) {
+
+            tessDataPath =
+                    "C:\\Program Files\\Tesseract-OCR\\tessdata";
+        }
+
+        tesseract.setDatapath(tessDataPath);
         tesseract.setLanguage("eng");
 
         ImageIO.setUseCache(false);
 
         try {
 
-            BufferedImage image = ImageIO.read(new File(imagePath));
+            BufferedImage image =
+                    ImageIO.read(new File(imagePath));
 
             if (image == null) {
                 return "Unable to read image";
@@ -33,8 +42,11 @@ public class OCRService {
             return tesseract.doOCR(image);
 
         } catch (Exception e) {
+
             e.printStackTrace();
-            return "OCR processing failed: " + e.getMessage();
+
+            return "OCR processing failed: "
+                    + e.getMessage();
         }
     }
 }
